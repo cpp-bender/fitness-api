@@ -3,12 +3,11 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3000;
 const {connectDatabase} = require("./helpers/connectDatabase");
-const User = require('./models/User');
+const router = require('./routers/index');
 
-// routers
-app.get("/", function (req, res) {
-  res.send("Hello World");
-});
+// middlewares
+app.use(express.json());
+app.use("/api", router);
 
 app.listen(PORT, () => {
   connectDatabase();

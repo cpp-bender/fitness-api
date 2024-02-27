@@ -5,6 +5,10 @@ const programSchema = new mongoose.Schema({
     type: String,
     required: [true, "cannot be null"],
   },
+  movements:[{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Movement",
+  }],
 });
 
 const Program = mongoose.model("Program", programSchema);

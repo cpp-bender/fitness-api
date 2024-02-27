@@ -5,6 +5,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "name is required"],
   },
+  password:{
+    type: String,
+    required:[true, "cannot be null"],
+    minlength: [6, "provide password with more than 6 chars"],
+  },
   email: {
     type: String,
     required: [true, "email  is required"],
@@ -28,6 +33,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "role is required"],
     enum: ["admin", "coach", "user"],
+    default: "user",
   },
   height: {
     type: Number,
@@ -35,6 +41,10 @@ const userSchema = new mongoose.Schema({
     min: 100,
     max: 250,
   },
+  program:[{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Program",
+  }],
 });
 
 const User = mongoose.model("User", userSchema);
