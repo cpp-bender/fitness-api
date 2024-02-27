@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
-
+const bcrypt = require("bcrypt");
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, "name is required"],
   },
-  password:{
+  password: {
     type: String,
-    required:[true, "cannot be null"],
+    required: [true, "cannot be null"],
     minlength: [6, "provide password with more than 6 chars"],
   },
   email: {
@@ -41,10 +41,31 @@ const userSchema = new mongoose.Schema({
     min: 100,
     max: 250,
   },
-  program:[{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Program",
-  }],
+  program: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Program",
+    },
+  ],
+});
+
+userSchema.pre("save", (next) => {
+  if (!this.isModified("password")) {
+    return next();
+  }
+  bcrypt.genSalt(10, (err, salt) => {
+    if (err) {
+      return next(err);
+    }
+    bcrypt.hash(this.password, salt, (err, hash) => {
+      if (err) {
+        return next(err);
+      }
+      // Store hash in your password DB.
+      this.password = hash;
+      next();
+    });
+  });
 });
 
 const User = mongoose.model("User", userSchema);
