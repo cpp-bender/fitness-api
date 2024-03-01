@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -9,6 +10,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "cannot be null"],
     minlength: [6, "provide password with more than 6 chars"],
+    select: false,
   },
   email: {
     type: String,
@@ -17,6 +19,7 @@ const userSchema = new mongoose.Schema({
       /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
       "Please enter a valid email",
     ],
+    unique: true,
   },
   gender: {
     type: String,
@@ -49,7 +52,23 @@ const userSchema = new mongoose.Schema({
   ],
 });
 
-userSchema.pre("save", (next) => {
+userSchema.methods.generateJwtFromUser = function () {
+  //jwt.sign(payload, secretOrPrivateKey, [options, callback])
+  const { JWT_SECRET_KEY, JWT_EXPIRE } = process.env;
+  const payload = {
+    id: this._id,
+    name: this.name,
+  };
+  const options = {
+    expiresIn: JWT_EXPIRE,
+  };
+
+  const token = jwt.sign(payload, JWT_SECRET_KEY, options);
+
+  return token;
+};
+
+userSchema.pre("save", function(next) {
   if (!this.isModified("password")) {
     return next();
   }
