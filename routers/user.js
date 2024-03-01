@@ -1,14 +1,12 @@
-const express = require('express');
-const router = express.Router();
-const User = require('../models/User');
-const {register, login, profileDetails} = require('../controllers/authController');
+const router = require('express').Router();
+const {register, login, showProfile} = require('../controllers/authController');
 
 // get requests
 router.get('/',(req, res) => {
     const name = req.body.name;
     res.send(name);
 });
-router.get('/myProfile', profileDetails);
+router.get('/myProfile', showProfile);
 
 // post requests
 router.post('/createUser', register);
