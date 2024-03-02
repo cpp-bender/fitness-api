@@ -47,15 +47,14 @@ const login = async(req, res) =>{
     .json({mess:"logged in succesfully", user, token});
 };
 
-const showProfile = async(req, res) => {
-    const token = req.headers.authorization.split(',')[1];
+const showProfile = (req, res) => {
+    const token = req.headers.authorization.split(':')[1];
     const SECRET_KEY = process.env.JWT_SECRET_KEY;
-    console.log(token);
     jwt.verify(token, SECRET_KEY, function(err, decoded) {
         if(err){
             return res.status(401).json({mess: "error occurred"});
         }
-        res.status(200).json({mess: "profile details", decoded});
+        return res.status(200).json({mess: "profile details", decoded});
     });
 };
 
