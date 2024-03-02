@@ -3,9 +3,9 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3000;
 const {connectDatabase} = require("./helpers/connectDatabase");
-const router = require('./routers/index');
+const router = require('./routers/indexRouter');
 
-// middlewares
+// built-in middlewares
 app.use(express.json());
 app.use("/api", router);
 
